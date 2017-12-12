@@ -2,11 +2,17 @@
 %% @todo URL validation, auto-linkification
 -module(bbcode).
 -export([parse/1, parse/2, clean/1, to_html/1]).
+-export_type([bbtree/0]).
 
+-type bbtree() :: [] | [ {atom(), iolist()|bbtree()} | iolist() ].
+
+-spec parse(iolist()) -> bbtree().
 %% @see parse/2.
 %% @doc Set a default max nesting depth for BBCode tags (10).
 parse(Text) -> parse(Text, 10).
 
+-spec parse(iolist(), integer()) -> bbtree() | { [iolist()]|[], bbtree()|iolist(), atom() }.
+%% @see parse/2.
 %% @doc Turn a bitstring into a parse tree. Each level is a list that can contain:
 %%  - bitstrings for text content
 %%  - tuples starting with the name of a tag, followed by:
@@ -70,6 +76,7 @@ parse([Text|Tokens], Tree, MaxDepth) ->
     parse(Tokens, [Text|Tree], MaxDepth).
 
 
+-spec name_tags(iolist()) -> {atom(), atom()}.
 %% @private
 %% @see parse/2.
 %% @todo pass a map of tag => name and detect closing/opening tags
@@ -91,6 +98,7 @@ name_tags(BareToken) ->
     end.
 
 
+-spec clean(bbtree()) -> bbtree().
 %% @doc Remove empty nodes from an Tree.
 %% Especially useful for comparisons with hand-typed Trees in unit tests.
 %% @end
@@ -117,6 +125,7 @@ clean(Value, []) ->
     Value.
 
 
+-spec to_html(bbtree()) -> bitstring().
 %% @doc Serialize an Tree from this module into an HTML bitstring.
 to_html(Tree) ->
     to_html(Tree, <<"">>).
@@ -135,6 +144,7 @@ to_html([{Tag, Value}|Tree], HTML) ->
 to_html([Text|Tree], HTML) ->
     to_html(Tree, <<HTML/binary, Text/binary>>).
 
+-spec html_tag(term()) -> {bitstring(), bitstring()}.
 %% @private
 %% @see to_html/2.
 %% @todo Instead of hard-coded values pass a map to to_html/1.

@@ -2,6 +2,10 @@
 
 A resilient imageboard.
 
-## Build
+Work in progress, there is nothing besides tests to run.
 
-    $ rebar3 compile
+## Test
+
+    $ rebar3 dialyzer
+    $ rebar3 eunit
+    $ rebar3 ct

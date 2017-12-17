@@ -24,11 +24,13 @@ board_create_read(_Config) ->
     {ok, Id} = hanako_model:board_add(<<"test">>, <<"t">>),
     {ok, Info} = hanako_model:board_info(Id),
     #hanako_board{id=Id, name= <<"test">>, short= <<"t">>} = Info,
+    {ok, Info} = hanako_model:board_info(<<"t">>),
+    {error, not_found} = hanako_model:board_info(<<"x">>),
     {ok, [Info]} = hanako_model:board_list(),
     {save_config, [{board_id, Id}]}.
 
 thread_create(Config) ->
-    {board_create_read, PrevConf} = ?config(saved_config, Config),
+    {_, PrevConf} = ?config(saved_config, Config),
     BoardId = ?config(board_id, PrevConf),
     Timestamp = os:timestamp(),
     Hash = crypto:hmac(sha, <<"salt">>, <<"tripcode">>),
@@ -57,7 +59,6 @@ thread_read(Config) ->
     [#hanako_thread{id=ThreadId}] = Result,
     {save_config, PrevConf}.
 
-%    ct:log(info, "Config: ~w~n", [Config]),
 post_create(Config) ->
     {thread_read, PrevConf} = ?config(saved_config, Config),
     ThreadId = ?config(thread_id, PrevConf),

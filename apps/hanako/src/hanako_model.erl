@@ -35,11 +35,19 @@ board_add(Name, Shorthand) ->
 %% @todo
 board_delete(_Id) -> ok.
 
--spec board_info(basic_id()) -> transaction(#hanako_board{}).
-board_info(Id) ->
+-spec board_info(basic_id() | bitstring()) ->
+    transaction(single_result(#hanako_board{})).
+board_info(Id) when is_integer(Id) ->
     Op = fun() ->
-                 [Board] = mnesia:read(hanako_board, Id),
-                 Board
+                 single_result(mnesia:read(hanako_board, Id))
+         end,
+    transaction(Op);
+
+board_info(ShortName) when is_bitstring(ShortName) ->
+    Op = fun() ->
+                 Q = qlc:q([Board || Board <- mnesia:table(hanako_board),
+                                     Board#hanako_board.short =:= ShortName]),
+                 single_result(qlc:eval(Q))
          end,
     transaction(Op).
 
@@ -209,9 +217,15 @@ post_from_ip(IP) ->
 %% @doc wrapper for getting backend-agnostic tuples out of mnesia transactions
 transaction(Fun) ->
     case mnesia:transaction(Fun) of
+        {atomic, not_found} -> {error, not_found};
         {atomic, Result} -> {ok, Result};
         {aborted, Reason} -> {error, Reason}
     end.
+
+-type single_result(Result) :: not_found | Result.
+%% @private
+single_result([]) -> not_found;
+single_result([Result]) -> Result.
 
 %% @private
 %% @doc for use in transactions

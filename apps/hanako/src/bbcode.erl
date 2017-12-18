@@ -4,14 +4,15 @@
 -export([parse/1, parse/2, clean/1, to_html/1]).
 -export_type([bbtree/0]).
 
--type bbtree() :: [] | [ {atom(), iolist()|bbtree()} | iolist() ].
+-type bbtree() :: [] | [ {atom(), bitstring()|bbtree()} | bitstring() ].
 
--spec parse(iolist()) -> bbtree().
+-spec parse(bitstring()) -> bbtree().
 %% @see parse/2.
 %% @doc Set a default max nesting depth for BBCode tags (10).
 parse(Text) -> parse(Text, 10).
 
--spec parse(iolist(), integer()) -> bbtree() | { [iolist()]|[], bbtree()|iolist(), atom() }.
+-spec parse(bitstring(), integer()) ->
+    bbtree() | { [bitstring()]|[], bbtree()|bitstring(), atom() }.
 %% @see parse/2.
 %% @doc Turn a bitstring into a parse tree. Each level is a list that can contain:
 %%  - bitstrings for text content
@@ -76,12 +77,12 @@ parse([Text|Tokens], Tree, MaxDepth) ->
     parse(Tokens, [Text|Tree], MaxDepth).
 
 
--spec name_tags(iolist()) -> {atom(), atom()}.
+-spec name_tags(bitstring()) -> {atom(), atom()}.
 %% @private
 %% @see parse/2.
 %% @todo pass a map of tag => name and detect closing/opening tags
 %% instead of hardcoding everything. This would require Erlang/OTP 20
-%% as its string manipulation functions are using iolists instead of lists.
+%% as its string manipulation functions are using bitstring instead of lists.
 name_tags(BareToken) ->
     case BareToken of
         <<"[i]">> -> {emph, open};

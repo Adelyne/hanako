@@ -7,7 +7,7 @@
 -type txt() :: bbcode:bbtree().
 
 -record(hanako_user, {
-          name=undefined :: undefined | iolist(), % must be unique if not undefined
+          name=undefined :: undefined | bitstring(), % must be unique if not undefined
           hash :: binary(), % password hash or tripcode hash
           type=volatile :: admin | moderator | volatile % if volatile and name =:= <<"">> => default name
          }).
@@ -27,15 +27,15 @@
 
 -record(media, {
           type :: atom(), % gif, png, webm...
-          id :: iolist(), % filename, youtube id...
+          id :: bitstring(), % filename, youtube id...
           metadata :: term() % depends on the type: size, width/height, youtube channel, duration...
          }).
 
 -record(hanako_board, {
           id :: basic_id(),
           counter=0 :: non_neg_integer(),
-          name :: iolist(),
-          short :: iolist()
+          name :: bitstring(),
+          short :: bitstring()
          }).
 
 -record(hanako_post, {
@@ -50,13 +50,13 @@
 -record(hanako_thread, {
           id :: #id{},
           metadata :: #metadata{},
-          subject=undefined :: undefined | iolist(),
+          subject=undefined :: undefined | bitstring(),
           modifier=[] :: [modifier()]
          }).
 
 -record(hanako_ban, {
           ip :: ip_or_subnet(),
-          reason=undefined :: undefined | iolist(),
+          reason=undefined :: undefined | bitstring(),
           duration=0 :: non_neg_integer(),
           appeal=0 :: non_neg_integer(),
           boards=all :: all | [basic_id()]

@@ -31,7 +31,17 @@ start_web(Opts) ->
             ok
     end.
 
-stop(_State) -> ok.
+stop(_State) ->
+    ok = stop_listener(hanako_http),
+    ok = stop_listener(hanako_https),
+    ok.
+
+%% @private
+stop_listener(Name) ->
+    case cowboy:stop_listener(Name) of
+        ok -> ok;
+        {error, not_found} -> ok
+    end.
 
 start_phase(_Phase, _StartType, _PhaseArgs) -> ok.
 

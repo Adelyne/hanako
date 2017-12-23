@@ -2,10 +2,34 @@
 -behaviour(application).
 -export([start/2, stop/1, start_phase/3, config_change/3]).
 
-%% @todo configuration of the application
-start(_StartType, _Arguments) ->
+start(_StartType, _StartArgs) ->
     ok = hanako_storage:create_tables(),
+    Opts = maps:from_list(application:get_all_env()),
+    ok = start_web(Opts),
     hanako_sup:start_link().
+
+%% @private
+start_web(Opts) ->
+    Defaults = #{
+      http_port => undefined,
+      https_port => undefined,
+      handlers => []
+    },
+    #{
+       http_port := HttpPort,
+       https_port := _HttpsPort,
+       handlers := Handlers
+      } = maps:merge(Defaults, Opts),
+    Routes = lists:flatmap(fun(Module) -> Module:routes() end, Handlers),
+    CompiledRoutes = cowboy_router:compile(Routes),
+    ProtocolOpts = #{env => #{dispatch => CompiledRoutes}},
+    if
+        is_integer(HttpPort) ->
+           {ok, _} = cowboy:start_clear(hanako_http, [{port, HttpPort}], ProtocolOpts),
+           ok;
+        HttpPort =:= undefined ->
+            ok
+    end.
 
 stop(_State) -> ok.
 

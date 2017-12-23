@@ -9,7 +9,10 @@
     mnesia,
     cowboy
    ]},
-  {env, []},
+  {env, [
+         {http_port, 80},
+         {handlers, []}
+        ]},
   {modules, [
              hanako,
              hanako_storage,

@@ -1,27 +1,15 @@
 -module(hanako_storage).
--export([start/2, stop/0, clean/0]).
 -include("hanako_model.hrl").
+-export([create_db/0, create_tables/0]).
 -define(CREATE_TABLE(Name), create_table(Name, record_info(fields, Name))).
 
-start(Dir, DumpLogTimeout) ->
-    ok = init_db(Dir, DumpLogTimeout),
-    ok = application:start(mnesia),
+create_tables() ->
     ok = ?CREATE_TABLE(hanako_board),
     ok = ?CREATE_TABLE(hanako_thread),
     ok = ?CREATE_TABLE(hanako_post),
-    ok = ?CREATE_TABLE(hanako_user),
-    ok.
+    ok = ?CREATE_TABLE(hanako_user).
 
-stop() ->
-    ok = application:stop(mnesia).
-
-clean() ->
-    ok = mnesia:delete_schema([node()]).
-
-%% @private
-init_db(Dir, DumpLogTimeout) ->
-    application:set_env(mnesia, dump_log_time_threshold, DumpLogTimeout),
-    application:set_env(mnesia, dir, Dir),
+create_db() ->
     case mnesia:create_schema([node()]) of
         ok -> ok;
         {error, {_, {already_exists, _}}} -> ok;

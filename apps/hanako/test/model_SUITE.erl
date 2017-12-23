@@ -10,15 +10,14 @@ all() -> [board_create_read, thread_create, thread_read,
           post_create, post_read, post_from_ip].
 
 init_per_suite(Config) ->
-    Dir = ?config(priv_dir, Config),
-    % Use a large number to effectively disable dumping
-    % of the transaction log during testing.
-    ok = hanako_storage:start(Dir, 180000),
+    ok = hanako_storage:create_db(),
+    ok = application:start(mnesia),
+    ok = hanako_storage:create_tables(),
     Config.
 
 end_per_suite(_Config) ->
-    ok = hanako_storage:stop(),
-    ok = hanako_storage:clean().
+    ok = application:stop(mnesia),
+    ok = mnesia:delete_schema([node()]).
 
 board_create_read(_Config) ->
     {ok, Id} = hanako_model:board_add(<<"test">>, <<"t">>),

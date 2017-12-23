@@ -1,16 +1,22 @@
 {application, hanako,
  [{description, "A resilient imageboard"},
   {vsn, "0.1.0"},
-  {registered, []},
-  {mod, { hanako_app, []}},
+  {registered, [hanako]},
+  {mod, { hanako, []}},
   {applications,
    [kernel,
     stdlib,
+    mnesia,
     cowboy
    ]},
-  {env,[]},
-  {modules, []},
-
+  {env, []},
+  {modules, [
+             hanako,
+             hanako_storage,
+             hanako_model,
+             hanako_sup,
+             bbcode
+            ]},
   {maintainers, []},
   {licenses, ["MIT"]},
   {links, []}

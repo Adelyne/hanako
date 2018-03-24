@@ -93,5 +93,5 @@ max_nesting_depth_test() ->
 %% --------------- %%
 html_test() ->
     Text = <<"this [i]is[/i] a [b]test[/b]">>,
-    Expected = <<"this <emph>is</emph> a <strong>test</strong>">>,
+    Expected = <<"this <em>is</em> a <strong>test</strong>">>,
     ?assertEqual(Expected, bbcode:to_html(parse(Text))).

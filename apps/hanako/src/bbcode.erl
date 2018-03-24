@@ -151,7 +151,7 @@ to_html([Text|Tree], HTML) ->
 %% @todo Instead of hard-coded values pass a map to to_html/1.
 html_tag(Tag) ->
     case Tag of
-        emph -> {<<"<emph>">>, <<"</emph>">>};
+        emph -> {<<"<em>">>, <<"</em>">>};
         strong -> {<<"<strong>">>, <<"</strong>">>};
         strike -> {<<"<span class=\"strike\">">>, <<"</span>">>};
         spoiler -> {<<"<span class=\"spoiler\">">>, <<"</span>">>};

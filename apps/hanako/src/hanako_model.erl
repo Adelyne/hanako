@@ -22,11 +22,11 @@ board_add(Name, Shorthand) ->
                                            end
                                    end, 0, Query),
                  Id = PrevId + 1,
-                 mnesia:write(#hanako_board{
-                                 id=Id,
-                                 name=Name,
-                                 short=Shorthand
-                                }),
+                 ok = mnesia:write(#hanako_board{
+                                      id=Id,
+                                      name=Name,
+                                      short=Shorthand
+                                     }),
                  Id
          end,
     transaction(Op).

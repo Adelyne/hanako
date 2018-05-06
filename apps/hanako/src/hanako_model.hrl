@@ -7,9 +7,9 @@
 -type txt() :: bbcode:bbtree().
 
 -record(hanako_user, {
-          name=undefined :: undefined | bitstring(), % must be unique if not undefined
+          name :: undefined | bitstring(), % must be unique if not undefined
           hash :: binary(), % password hash or tripcode hash
-          type=volatile :: admin | moderator | volatile % if volatile and name =:= <<"">> => default name
+          type :: admin | moderator | volatile % if volatile and name =:= undefined => default name
          }).
 
 -record(metadata, {

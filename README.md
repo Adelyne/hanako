@@ -1,5 +1,7 @@
 # Hanako
 
+[![Build Status](https://travis-ci.com/Adelyne/hanako.svg?branch=master)](https://travis-ci.com/Adelyne/hanako)
+
 A resilient imageboard.
 
 Work in progress, there is nothing besides tests to run.
